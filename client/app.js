@@ -4,6 +4,7 @@ function App() {
   const [groups, setGroups] = useState([]);
   const [groupName, setGroupName] = useState('');
   const [members, setMembers] = useState('');
+  const [selectedGroup, setSelectedGroup] = useState(null);
 
   const createGroup = async () => {
     if (!groupName || !members) return;
@@ -51,11 +52,13 @@ function App() {
         <h2>Your Groups</h2>
         {groups.length === 0 && <p style={{ color: '#888' }}>No groups yet. Create one above!</p>}
         {groups.map(group => (
-          <div key={group.id} style={{ background: '#fff', border: '1px solid #ddd', padding: '15px', borderRadius: '8px', marginBottom: '10px' }}>
-            <h3>{group.name}</h3>
-            <p>Members: {group.members.join(', ')}</p>
-          </div>
-        ))}
+        <div key={group.id} 
+        onClick={() => { setSelectedGroup(group); console.log(group); }}
+        style={{ background: '#fff', border: '1px solid #ddd', padding: '15px', borderRadius: '8px', marginBottom: '10px', cursor: 'pointer' }}>
+        <h3>{group.name}</h3>
+        <p>Members: {group.members.join(', ')}</p>
+        </div>
+))}
       </div>
     </div>
   );

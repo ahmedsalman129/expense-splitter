@@ -4,6 +4,7 @@ function App() {
   const [groups, setGroups] = useState([]);
   const [groupName, setGroupName] = useState("");
   const [members, setMembers] = useState("");
+  const [selectedGroup, setSelectedGroup] = useState(null);
 
   const createGroup = async () => {
     if (!groupName || !members) return;
@@ -24,36 +25,58 @@ function App() {
   return (
     <div style={{ maxWidth: "600px", margin: "40px auto", fontFamily: "Arial" }}>
       <h1>Expense Splitter</h1>
-      <div style={{ background: "#f5f5f5", padding: "20px", borderRadius: "8px", marginBottom: "20px" }}>
-        <h2>Create a Group</h2>
-        <input
-          placeholder="Group name (e.g. Trip to Lahore)"
-          value={groupName}
-          onChange={e => setGroupName(e.target.value)}
-          style={{ width: "100%", padding: "8px", marginBottom: "10px", boxSizing: "border-box" }}
-        />
-        <input
-          placeholder="Members (comma separated: Ahmed, Ali, Sara)"
-          value={members}
-          onChange={e => setMembers(e.target.value)}
-          style={{ width: "100%", padding: "8px", marginBottom: "10px", boxSizing: "border-box" }}
-        />
-        <button
-          onClick={createGroup}
-          style={{ background: "#4CAF50", color: "white", padding: "10px 20px", border: "none", borderRadius: "4px", cursor: "pointer" }}
-        >
-          Create Group
-        </button>
-      </div>
+
+      {!selectedGroup && (
+        <div style={{ background: "#f5f5f5", padding: "20px", borderRadius: "8px", marginBottom: "20px" }}>
+          <h2>Create a Group</h2>
+          <input
+            placeholder="Group name (e.g. Trip to Lahore)"
+            value={groupName}
+            onChange={e => setGroupName(e.target.value)}
+            style={{ width: "100%", padding: "8px", marginBottom: "10px", boxSizing: "border-box" }}
+          />
+          <input
+            placeholder="Members (comma separated: Ahmed, Ali, Sara)"
+            value={members}
+            onChange={e => setMembers(e.target.value)}
+            style={{ width: "100%", padding: "8px", marginBottom: "10px", boxSizing: "border-box" }}
+          />
+          <button
+            onClick={createGroup}
+            style={{ background: "#4CAF50", color: "white", padding: "10px 20px", border: "none", borderRadius: "4px", cursor: "pointer" }}
+          >
+            Create Group
+          </button>
+        </div>
+      )}
+
       <div>
-        <h2>Your Groups</h2>
-        {groups.length === 0 && <p style={{ color: "#888" }}>No groups yet. Create one above!</p>}
-        {groups.map(group => (
-          <div key={group.id} style={{ background: "#fff", border: "1px solid #ddd", padding: "15px", borderRadius: "8px", marginBottom: "10px" }}>
-            <h3>{group.name}</h3>
-            <p>Members: {group.members.join(", ")}</p>
+        {selectedGroup ? (
+          <div>
+            <button
+              onClick={() => setSelectedGroup(null)}
+              style={{ marginBottom: "15px", padding: "8px 16px", cursor: "pointer", borderRadius: "4px", border: "1px solid #ddd" }}>
+              Back to Groups
+            </button>
+            <h2>{selectedGroup.name}</h2>
+            <p>Members: {selectedGroup.members.join(", ")}</p>
+            <h3>Expenses</h3>
+            <p style={{ color: "#888" }}>No expenses yet.</p>
           </div>
-        ))}
+        ) : (
+          <div>
+            <h2>Your Groups</h2>
+            {groups.length === 0 && <p style={{ color: "#888" }}>No groups yet. Create one above!</p>}
+            {groups.map(group => (
+              <div key={group.id}
+                onClick={() => setSelectedGroup(group)}
+                style={{ background: "#fff", border: "1px solid #ddd", padding: "15px", borderRadius: "8px", marginBottom: "10px", cursor: "pointer" }}>
+                <h3>{group.name}</h3>
+                <p>Members: {group.members.join(", ")}</p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
