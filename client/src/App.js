@@ -44,6 +44,35 @@ function App() {
     setPaidBy("");
   };
 
+  const calculateDebts = () => {
+    const totalExpenses = selectedGroup.expenses.reduce((sum, e) => sum + e.amount, 0);
+    const fairShare = totalExpenses / selectedGroup.members.length;
+    const balances = {};
+    selectedGroup.members.forEach(member => {
+      balances[member] = 0;
+    });
+    selectedGroup.expenses.forEach(expense => {
+      balances[expense.paidBy] += expense.amount;
+    });
+    selectedGroup.members.forEach(member => {
+      balances[member] -= fairShare;
+    });
+    const debts = [];
+    const debtors = Object.keys(balances).filter(m => balances[m] < 0);
+    const creditors = Object.keys(balances).filter(m => balances[m] > 0);
+    debtors.forEach(debtor => {
+      creditors.forEach(creditor => {
+        if (balances[debtor] < 0 && balances[creditor] > 0) {
+          const amount = Math.min(Math.abs(balances[debtor]), balances[creditor]);
+          debts.push({ from: debtor, to: creditor, amount: Math.round(amount) });
+          balances[debtor] += amount;
+          balances[creditor] -= amount;
+        }
+      });
+    });
+    return debts;
+  };
+
   return (
     <div style={{ maxWidth: "600px", margin: "40px auto", fontFamily: "Arial" }}>
       <h1>Expense Splitter</h1>
@@ -122,6 +151,18 @@ function App() {
                 <p>Paid by: {expense.paidBy}</p>
               </div>
             ))}
+
+            {selectedGroup.expenses.length > 0 && (
+              <div style={{ background: "#fff8e1", border: "1px solid #ffe082", padding: "20px", borderRadius: "8px", marginTop: "20px" }}>
+                <h3>Who owes who?</h3>
+                {calculateDebts().length === 0 && <p style={{ color: "#888" }}>Everyone is settled up!</p>}
+                {calculateDebts().map((debt, index) => (
+                  <div key={index} style={{ padding: "8px 0", borderBottom: "1px solid #ffe082" }}>
+                    <strong>{debt.from}</strong> owes <strong>{debt.to}</strong> ? <strong>{debt.amount}</strong>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         ) : (
           <div>
