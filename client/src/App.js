@@ -11,7 +11,7 @@ function App() {
 
   const createGroup = async () => {
     if (!groupName || !members) return;
-    const response = await fetch("http://localhost:5000/groups", {
+    const response = await fetch("https://expense-splitter-production-3398.up.railway.app/groups", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -27,7 +27,7 @@ function App() {
 
   const addExpense = async () => {
     if (!description || !amount || !paidBy) return;
-    const response = await fetch(`http://localhost:5000/groups/${selectedGroup.id}/expenses`, {
+    const response = await fetch(`https://expense-splitter-production-3398.up.railway.app/groups/${selectedGroup.id}/expenses`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ description, amount: parseFloat(amount), paidBy })
@@ -191,3 +191,4 @@ function App() {
 }
 
 export default App;
+
